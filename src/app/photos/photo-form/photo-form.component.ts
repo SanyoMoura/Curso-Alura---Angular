@@ -1,4 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+
+import { PhotoService } from '../photo/photo.service';
+import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { UserService } from 'src/app/core/user/user.service';
 
 @Component({
   selector: 'ap-photo-form',
@@ -7,9 +14,52 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PhotoFormComponent implements OnInit {
 
-  constructor() { }
+  photoForm: FormGroup;
+  file: File;
+  preview: string;
+  progress = 0;
+
+  constructor(private _photoService: PhotoService, private _formBuilder: FormBuilder,
+    private _router: Router, private _alertService: AlertService,
+    private _userService: UserService) { }
 
   ngOnInit() {
+    this.photoForm = this._formBuilder.group({
+      file: ['', Validators.required],
+      description: ['', Validators.maxLength(300)],
+      allowComments: [true]
+    });
   }
 
+  upload() {
+    const description = this.photoForm.get('description').value;
+    const allowComments = this.photoForm.get('allowComments').value;
+
+    this._photoService
+      .upload(description, allowComments, this.file)
+      .subscribe((event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress)
+          this.progress = Math.round(100 * event.loaded / event.total);
+        else if (event instanceof HttpResponse) {
+          this._alertService.success('Photo successfully uploaded.', true);
+          this._router.navigate(['/user', this._userService.userName]);
+        }
+      },
+      err => {
+        console.log(err);
+        this._alertService.warning('Could not upload photo!', true);
+      });
+  }
+
+  cancel() {
+    this._router.navigate(['']);
+  }
+
+  handleFile(file: File) {
+    this.file = file;
+
+    const reader = new FileReader();
+    reader.onload = (event: any) => this.preview = event.target.result;
+    reader.readAsDataURL(file);
+  }
 }

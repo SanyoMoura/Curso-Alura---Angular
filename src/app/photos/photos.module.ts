@@ -4,14 +4,16 @@ import { CommonModule } from '@angular/common';
 import { PhotoModule } from './photo/photo.module';
 import { PhotoFormModule } from './photo-form/photo-form.module';
 import { PhotoListModule } from './photo-list/photo-list.module';
+import { PhotoDetailsModule } from './photo-details/photo-details.module';
 
 @NgModule({
   declarations: [],
   imports: [
+    CommonModule,
     PhotoModule,
     PhotoFormModule,
     PhotoListModule,
-    CommonModule
+    PhotoDetailsModule
   ]
 })
 export class PhotosModule { }

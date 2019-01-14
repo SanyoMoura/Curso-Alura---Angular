@@ -6,18 +6,26 @@ import { RouterModule } from '@angular/router';
 import { SigninComponent } from './signin/signin.component';
 import { VmessageModule } from '../shared/components/vmessage/vmessage.module';
 import { SignupComponent } from './signup/signup.component';
+import { HomeComponent } from './home.component';
+import { HomeRoutingModule } from './home-routing.module';
+import { SignupService } from './signup/signup.service';
 
 @NgModule({
   declarations: [
     SigninComponent,
-    SignupComponent
+    SignupComponent,
+    HomeComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     VmessageModule,
-    RouterModule
+    RouterModule,
+    HomeRoutingModule
+  ],
+  providers: [
+    SignupService
   ]
 })
 export class HomeModule { }
